@@ -1,16 +1,17 @@
 #include <wiringPi.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "PCD8544.h"
 
-int pin_sclk = 4;
-int pin_din = 3;
-int pin_dc = 2;
-int pin_rst = 0;
-int pin_ce = 1;
+uint8_t pin_sclk = 4;
+uint8_t pin_din = 3;
+uint8_t pin_dc = 2;
+uint8_t pin_rst = 0;
+uint8_t pin_ce = 1;
 
 // This is already tuned
-int lcd_contrast = 60;
+uint8_t lcd_contrast = 60;
 char timeString[9];
 
 void cleanup(void)
@@ -30,7 +31,7 @@ char * get_time(void)
     time_info = localtime(&current_time);
     strftime(timeString, sizeof(timeString), "%H:%M:%S", time_info);
     // printf("%s\n", &timeString);
-    return &timeString;
+    return (char *) &timeString;
 }
 
 int main(int argc, char const *argv[])
@@ -64,6 +65,7 @@ int main(int argc, char const *argv[])
         // LCDclear();
     }
 
+    // TODO catch quit signal / event and clean up the screen
     LCDclear();
     cleanup();
     return 0;
