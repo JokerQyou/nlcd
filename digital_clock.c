@@ -41,7 +41,7 @@ void signal_callback(int signum)
     LCDclear();
     LCDdisplay();
     gpio_cleanup();
-    exit(signum);
+    exit(0);
 }
 
 int main(int argc, char const *argv[])
