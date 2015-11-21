@@ -1,8 +1,8 @@
-#include <wiringPi.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include "PCD8544.h"
+#include "wiringPi/wiringPi/wiringPi.h"
 
 uint8_t pin_sclk = 4;
 uint8_t pin_din = 3;
@@ -14,7 +14,7 @@ uint8_t pin_ce = 1;
 uint8_t lcd_contrast = 60;
 char timeString[9];
 
-void cleanup(void)
+void gpio_cleanup(void)
 {
     pinMode(pin_sclk, INPUT);
     pinMode(pin_din, INPUT);
@@ -67,6 +67,6 @@ int main(int argc, char const *argv[])
 
     // TODO catch quit signal / event and clean up the screen
     LCDclear();
-    cleanup();
+    gpio_cleanup();
     return 0;
 }
