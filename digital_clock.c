@@ -74,9 +74,4 @@ int main(int argc, char const *argv[])
         LCDdisplay();
         delay(1000);
     }
-
-    // TODO catch quit signal / event and clean up the screen
-    LCDclear();
-    gpio_cleanup();
-    return 0;
 }
