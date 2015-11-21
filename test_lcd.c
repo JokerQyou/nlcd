@@ -12,7 +12,7 @@ int pin_ce = 1;
 // This is already tuned
 int lcd_contrast = 60;
 
-void cleanup(void)
+void gpio_cleanup(void)
 {
     pinMode(pin_sclk, INPUT);
     pinMode(pin_din, INPUT);
@@ -51,6 +51,6 @@ int main(int argc, char const *argv[])
     LCDclear();
 
     LCDclear();
-    cleanup();
+    gpio_cleanup();
     return 0;
 }
