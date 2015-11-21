@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <signal.h>
 #include "PCD8544.h"
 #include "wiringPi/wiringPi/wiringPi.h"
 
@@ -34,6 +35,15 @@ char * get_time(void)
     return (char *) &timeString;
 }
 
+void signal_callback(int signum)
+{
+    printf("Caught signal: %i\n", signum);
+    LCDclear();
+    LCDdisplay();
+    gpio_cleanup();
+    exit(signum);
+}
+
 int main(int argc, char const *argv[])
 {
     printf("nLCD tool\n");
@@ -49,6 +59,7 @@ int main(int argc, char const *argv[])
         printf("wiringPi error\n");
         exit(1);
     }
+    signal(SIGINT, signal_callback);
 
     LCDInit(pin_sclk, pin_din, pin_dc, pin_ce, pin_rst, lcd_contrast);
     LCDcommand(PCD8544_DISPLAYCONTROL | PCD8544_DISPLAYALLON);
@@ -59,10 +70,9 @@ int main(int argc, char const *argv[])
     while (1)
     {
         LCDdrawrect(6 - 1, 6 - 1, LCDWIDTH - 6, LCDHEIGHT - 6, BLACK);
-        LCDdrawstring(12, 12, get_time());
+        LCDdrawstring(20, 12, get_time());
         LCDdisplay();
         delay(1000);
-        // LCDclear();
     }
 
     // TODO catch quit signal / event and clean up the screen
