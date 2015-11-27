@@ -63,7 +63,7 @@ func main() {
             gpio_cleanup()
             panic(err)
         }
-        temp_str := fmt.Sprint(strconv.FormatFloat(temp, 'f', 2, 64), "°C")
+        temp_str := fmt.Sprint(strconv.FormatFloat(temp, 'f', 2, 64), " C")
 
         pcd8544.LCDdrawrect(6 - 1, 6 - 1, pcd8544.LCDWIDTH - 6, pcd8544.LCDHEIGHT - 6, pcd8544.BLACK)
         time_str, date_str := get_time()
