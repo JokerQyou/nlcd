@@ -7,11 +7,11 @@ import (
 )
 
 const (
-    SCLK = 4
-    DIN = 3
+    SCLK = 0
+    DIN = 1
     DC = 2
-    CS = 1
-    RST = 0
+    CS = 3
+    RST = 4
     CONTRAST = 60
 )
 
@@ -33,16 +33,18 @@ func gpio_cleanup() {
     rpi.PinMode(RST, rpi.INPUT)
 }
 
-func get_time() string {
+func get_time() (string, string) {
     t := time.Now()
-    return t.Format("15:04:05")
+    return t.Format("15:04:05"), t.Format("01-02 Mon")
 }
 
 func main() {
     keep_running := true
     for keep_running {
         pcd8544.LCDdrawrect(6 - 1, 6 - 1, pcd8544.LCDWIDTH - 6, pcd8544.LCDHEIGHT - 6, pcd8544.BLACK)
-        pcd8544.LCDdrawstring(20, 12, get_time())
+        time_str, date_str := get_time()
+        pcd8544.LCDdrawstring(20, 12, time_str)
+        pcd8544.LCDdrawstring(18, 24, date_str)
         pcd8544.LCDdisplay()
         // wait for 1 sec
         time.Sleep(time.Second)
