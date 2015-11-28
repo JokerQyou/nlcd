@@ -2,7 +2,10 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"os/signal"
 	"strconv"
+	"syscall"
 	"time"
 
 	"github.com/JokerQyou/rpi"
@@ -47,6 +50,7 @@ func get_time() (string, string) {
 }
 
 func main() {
+	sig := make(chan os.Signal, 1)
 	if err := embd.InitI2C(); err != nil {
 		panic(err)
 	}
@@ -56,6 +60,22 @@ func main() {
 	baro := bmp085.New(bus)
 	defer baro.Close()
 
+	// Draw the outline
+	pcd8544.LCDdrawrect(6-1, 6-1, pcd8544.LCDWIDTH-6, pcd8544.LCDHEIGHT-6, pcd8544.BLACK)
+	// date string changes slowly
+	var (
+		date_str string
+		temp_str string
+	)
+
+	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		s := <-sig
+		fmt.Println(s)
+		gpio_cleanup()
+		os.Exit(0)
+	}()
+
 	keep_running := true
 	for keep_running {
 		// Get temperature
@@ -64,13 +84,18 @@ func main() {
 			gpio_cleanup()
 			panic(err)
 		}
-		temp_str := fmt.Sprint(strconv.FormatFloat(temp, 'f', 2, 64), " C")
+		_temp_str := fmt.Sprint(strconv.FormatFloat(temp, 'f', 2, 64), " C")
 
-		pcd8544.LCDdrawrect(6-1, 6-1, pcd8544.LCDWIDTH-6, pcd8544.LCDHEIGHT-6, pcd8544.BLACK)
-		time_str, date_str := get_time()
+		time_str, _date_str := get_time()
 		pcd8544.LCDdrawstring(20, 12, time_str)
-		pcd8544.LCDdrawstring(18, 24, date_str)
-		pcd8544.LCDdrawstring(20, 36, temp_str)
+		if date_str != _date_str {
+			date_str = _date_str
+			pcd8544.LCDdrawstring(18, 24, date_str)
+		}
+		if temp_str != _temp_str {
+			temp_str = _temp_str
+			pcd8544.LCDdrawstring(20, 36, temp_str)
+		}
 		pcd8544.LCDdisplay()
 		// wait for 1 sec
 		time.Sleep(time.Second)
