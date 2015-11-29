@@ -200,7 +200,7 @@ func (p *PCD8544) Write(char uint8) {
 	if char >= ' ' {
 		// Regular ASCII characters are kept in flash to save RAM...
 		// memcpy_P(pgm_buffer, &charset[chr - ' '], sizeof(pgm_buffer));
-		glyph = CHARSET[char]
+		glyph = CHARSET[char-' ']
 	} else {
 		// Custom glyphs, on the other hand, are stored in RAM...
 		if _, ok := p.custom[char]; ok {
