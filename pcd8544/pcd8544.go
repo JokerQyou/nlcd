@@ -98,6 +98,7 @@ func (p *PCD8544) send(type_ uint8, data uint8) {
 func (p *PCD8544) Close() {
 	p.Clear()
 	p.setPower(false)
+	embd.CloseGPIO()
 }
 
 func (p *PCD8544) Clear() {
@@ -153,6 +154,9 @@ func (p *PCD8544) CreateChar() {
 }
 
 func (p *PCD8544) init() {
+	if err := embd.InitGPIO(); err != nil {
+		panic(err)
+	}
 	// All pin direction are output
 	embd.SetDirection(p.PIN_SCLK, embd.Out)
 	embd.SetDirection(p.PIN_DIN, embd.Out)
